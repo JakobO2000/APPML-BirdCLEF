@@ -1,0 +1,19 @@
+Week1:
+- talk with supervisor/get a supervisor
+- load data
+- decide metadata
+- making working tree
+-
+
+Week2:
+- All models done
+
+
+Week3:
+- 
+
+
+Overall goals:
+- tree (Malthe)
+- cnn (Jakob)
+- nn after cnn (Birk)

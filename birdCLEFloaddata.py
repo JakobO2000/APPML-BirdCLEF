@@ -4,42 +4,51 @@ import torch
 import torchaudio
 import soundfile as sf
 import timeit
+import librosa
 
-# Takes the directory with the data and loads it
-def load_data(directory):
+# Takes the directory with the data and returns pandas with metadata
+def load_metadata(directory):
     df = pandas.read_csv(directory+'/train_metadata.csv')
-    audio_ogg = []
-    for file in df['filename']:
-         audio_ogg.append(sf.read(directory+"/train_audio/"+file))
-
-
-    audio_ogg = np.asarray(audio_ogg)
-    df['audio1'] = audio_ogg[:,0]
-    df['audio2'] = audio_ogg[:,1]
-    df['audio3'] = audio_ogg[:,2]
-    chosen_coloumns = ['latitude', 'longitude', 'common_name', 'rating', 'time', 'audio']
+    df['filename'] = directory+"/train_audio/"+df['filename']
+    chosen_coloumns = ['latitude', 'longitude', 'common_name', 'rating', 'time', 'filename']
     return df[chosen_coloumns]
 
+
+# Takes filepath from metadata dataframe and returns audio file
+def load_audiofile(filepath):
+    audio, sr = librosa.load(filepath)
+    return audio, sr
+
+
+# Converts ogg audio to waveform and spectrogram. Exact values for melspectrogram function might need to be changed values currently chosen from https://www.kaggle.com/code/awsaf49/birdclef23-pretraining-is-all-you-need-train
+# audio -- Can be filepath from metadata dataframe or numpy array with ogg data
+def get_melspectrogram(audio, sr=32000):
+    if type(audio) is str:
+        audio, sr = load_audiofile(audio)
+
+    melspectrogram = librosa.feature.melspectrogram(y=audio, 
+                                    sr=sr, 
+                                    n_mels=128,
+                                    n_fft=2028,
+                                    hop_length=512, #base value from function in notebook it is calculated as duration_of_audio*sr//(384-1)
+                                    fmax=16000,
+                                    fmin=20,
+                                    )
+    melspectrogram = librosa.power_to_db(melspectrogram, ref=1.0)
+    return melspectrogram
+
+#Calculates Short Time Fourier Transformation of an audio file
+# audio -- Can be filepath from metadata dataframe or numpy array with ogg data
+def get_STFT(audio, sr=32000):
+    if type(audio) is str:
+        audio, sr = load_audiofile(audio)
+    stft_audio = librosa.stft(audio, n_fft=2028, hop_length=512)
+    return stft_audio
+
+
+
 path = r"C:\Users\zhakk\OneDrive\Skrivebord\Uni\Kandidat\AML-Final\BirdCLEFData"
-
-# Takes the directory with the data and loads it
-def load_audiofile(directory):
-    df = pandas.read_csv(directory+'/train_metadata.csv')
-    audio_ogg = []
-    for file in df['filename']:
-         audio_ogg.append(sf.read(directory+"/train_audio/"+file))
-
-
-    audio_ogg = np.asarray(audio_ogg)
-    df['audio1'] = audio_ogg[:,0]
-    df['audio2'] = audio_ogg[:,1]
-    df['audio3'] = audio_ogg[:,2]
-    chosen_coloumns = ['latitude', 'longitude', 'common_name', 'rating', 'time', 'audio']
-    return df[chosen_coloumns]
-
-path = r"C:\Users\zhakk\OneDrive\Skrivebord\Uni\Kandidat\AML-Final\BirdCLEFData"
-
-df = load_data(path)
+df = load_metadata(path)
 print(df)
-
-df.to_csv(path)
+ogg = load_audiofile(df.at[0, 'filename'])
+print(ogg)

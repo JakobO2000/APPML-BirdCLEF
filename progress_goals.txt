@@ -17,3 +17,6 @@ Overall goals:
 - tree (Malthe)
 - cnn (Jakob)
 - nn after cnn (Birk)
+
+Where to find data:
+https://www.kaggle.com/competitions/birdclef-2023/data?select=train_metadata.csv

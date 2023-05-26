@@ -16,32 +16,31 @@ def load_metadata(directory):
 
 # Takes filepath from metadata dataframe and returns audio file
 def load_audiofile(filepath):
-    audio, sr = librosa.load(filepath)
+    audio, sr = librosa.load(filepath, sr=None)
     return audio, sr
 
 
 # Converts ogg audio to waveform and spectrogram. Exact values for melspectrogram function might need to be changed values currently chosen from https://www.kaggle.com/code/awsaf49/birdclef23-pretraining-is-all-you-need-train
 # audio -- Can be filepath from metadata dataframe or numpy array with ogg data
-def get_melspectrogram(audio, sr=22050):
+def get_melspectrogram(audio, sr=32000, n_mels=128, n_fft=2028, hop_length=512, fmax=16000, fmin=20):
     if type(audio) is str:
         audio, sr = load_audiofile(audio)
 
     melspectrogram = librosa.feature.melspectrogram(y=audio, 
                                     sr=sr, 
-                                    n_mels=128,
-                                    n_fft=2028,
-                                    hop_length=512, #base value from function in notebook it is calculated as duration_of_audio*sr//(384-1)
-                                    fmax=11000,
-                                    fmin=20,
+                                    n_mels=n_mels,
+                                    n_fft=n_fft,
+                                    hop_length=hop_length, #base value from function in notebook it is calculated as duration_of_audio*sr//(384-1)
+                                    fmax=fmax,
+                                    fmin=fmin,
                                     )
     melspectrogram = librosa.power_to_db(melspectrogram, ref=1.0)
     return melspectrogram
 
 #Calculates Short Time Fourier Transformation of an audio file
 # audio -- Can be filepath from metadata dataframe or numpy array with ogg data
-def get_STFT(audio, sr=22050):
+def get_STFT(audio, sr=32000, n_fft=2028, hop_length=512):
     if type(audio) is str:
         audio, sr = load_audiofile(audio)
-    stft_audio = librosa.stft(audio, n_fft=2028, hop_length=512)
+    stft_audio = librosa.stft(audio, n_fft=n_fft, hop_length=hop_length)
     return stft_audio
-

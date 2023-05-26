@@ -10,7 +10,7 @@ import librosa
 def load_metadata(directory):
     df = pandas.read_csv(directory+'/train_metadata.csv')
     df['filename'] = directory+"/train_audio/"+df['filename']
-    chosen_coloumns = ['latitude', 'longitude', 'common_name', 'rating', 'time', 'filename']
+    chosen_coloumns = ['latitude', 'longitude', 'common_name', 'rating', 'filename']
     return df[chosen_coloumns]
 
 
@@ -22,7 +22,7 @@ def load_audiofile(filepath):
 
 # Converts ogg audio to waveform and spectrogram. Exact values for melspectrogram function might need to be changed values currently chosen from https://www.kaggle.com/code/awsaf49/birdclef23-pretraining-is-all-you-need-train
 # audio -- Can be filepath from metadata dataframe or numpy array with ogg data
-def get_melspectrogram(audio, sr=32000):
+def get_melspectrogram(audio, sr=22050):
     if type(audio) is str:
         audio, sr = load_audiofile(audio)
 
@@ -31,7 +31,7 @@ def get_melspectrogram(audio, sr=32000):
                                     n_mels=128,
                                     n_fft=2028,
                                     hop_length=512, #base value from function in notebook it is calculated as duration_of_audio*sr//(384-1)
-                                    fmax=16000,
+                                    fmax=11000,
                                     fmin=20,
                                     )
     melspectrogram = librosa.power_to_db(melspectrogram, ref=1.0)
@@ -39,16 +39,9 @@ def get_melspectrogram(audio, sr=32000):
 
 #Calculates Short Time Fourier Transformation of an audio file
 # audio -- Can be filepath from metadata dataframe or numpy array with ogg data
-def get_STFT(audio, sr=32000):
+def get_STFT(audio, sr=22050):
     if type(audio) is str:
         audio, sr = load_audiofile(audio)
     stft_audio = librosa.stft(audio, n_fft=2028, hop_length=512)
     return stft_audio
 
-
-
-path = r"C:\Users\zhakk\OneDrive\Skrivebord\Uni\Kandidat\AML-Final\BirdCLEFData"
-df = load_metadata(path)
-print(df)
-ogg = load_audiofile(df.at[0, 'filename'])
-print(ogg)

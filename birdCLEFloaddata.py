@@ -26,7 +26,6 @@ def get_melspectrogram(audio, sr=32000, n_mels=128, n_fft=2028, hop_length=512, 
     if type(audio) is str:
         audio, sr = load_audiofile(audio)
     waveform = torch.from_numpy(audio)
-    print("got to 1")
     transform = torchaudio.transforms.MelSpectrogram( 
                                     sample_rate=sr, 
                                     n_mels=n_mels,
@@ -36,7 +35,6 @@ def get_melspectrogram(audio, sr=32000, n_mels=128, n_fft=2028, hop_length=512, 
                                     f_min=fmin,
                                     )
     melspectrogram = transform(waveform)
-    print("got to 2")
     multiplier = 10.0 ** (80 / 20.0)
     db_multiplier = 20.0 / np.log10(multiplier)
     melspectrogram = torchaudio.functional.amplitude_to_DB(melspectrogram,multiplier=multiplier,amin=1e-10,db_multiplier=db_multiplier)

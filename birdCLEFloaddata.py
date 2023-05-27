@@ -3,8 +3,7 @@ import pandas
 import torch
 import torchaudio
 import soundfile as sf
-import timeit
-import librosa
+from scipy.signal import stft
 
 # Takes the directory with the data and returns pandas with metadata
 def load_metadata(directory):
@@ -16,8 +15,8 @@ def load_metadata(directory):
 
 # Takes filepath from metadata dataframe and returns audio file
 def load_audiofile(filepath):
-    audio, sr = librosa.load(filepath, sr=None)
-    return audio, sr
+    audio, sr = sf.read(filepath)
+    return audio.astype(np.float32), sr
 
 
 # Converts ogg audio to waveform and spectrogram. Exact values for melspectrogram function might need to be changed values currently chosen from https://www.kaggle.com/code/awsaf49/birdclef23-pretraining-is-all-you-need-train
@@ -43,8 +42,9 @@ def get_melspectrogram(audio, sr=32000, n_mels=128, n_fft=2028, hop_length=512, 
 
 #Calculates Short Time Fourier Transformation of an audio file
 # audio -- Can be filepath from metadata dataframe or numpy array with ogg data
-def get_STFT(audio, sr=32000, n_fft=2028, hop_length=512):
+def get_STFT(audio, sr=32000, n_fft=2028, nperseg=512):
     if type(audio) is str:
         audio, sr = load_audiofile(audio)
-    stft_audio = librosa.stft(audio, n_fft=n_fft, hop_length=hop_length)
+    stft_audio = stft(audio, nfft=n_fft, nperseg=nperseg)
     return stft_audio
+

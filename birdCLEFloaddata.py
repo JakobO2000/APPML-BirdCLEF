@@ -25,16 +25,22 @@ def load_audiofile(filepath):
 def get_melspectrogram(audio, sr=32000, n_mels=128, n_fft=2028, hop_length=512, fmax=16000, fmin=20):
     if type(audio) is str:
         audio, sr = load_audiofile(audio)
-
-    melspectrogram = librosa.feature.melspectrogram(y=audio, 
-                                    sr=sr, 
+    waveform = torch.from_numpy(audio)
+    print("got to 1")
+    transform = torchaudio.transforms.MelSpectrogram( 
+                                    sample_rate=sr, 
                                     n_mels=n_mels,
                                     n_fft=n_fft,
                                     hop_length=hop_length, #base value from function in notebook it is calculated as duration_of_audio*sr//(384-1)
-                                    fmax=fmax,
-                                    fmin=fmin,
+                                    f_max=fmax,
+                                    f_min=fmin,
                                     )
-    melspectrogram = librosa.power_to_db(melspectrogram, ref=1.0)
+    melspectrogram = transform(waveform)
+    print("got to 2")
+    multiplier = 10.0 ** (80 / 20.0)
+    db_multiplier = 20.0 / np.log10(multiplier)
+    melspectrogram = torchaudio.functional.amplitude_to_DB(melspectrogram,multiplier=multiplier,amin=1e-10,db_multiplier=db_multiplier)
+
     return melspectrogram
 
 #Calculates Short Time Fourier Transformation of an audio file

@@ -8,9 +8,14 @@ Week1:
 Week2:
 - All models done
 
-
 Week3:
 - 
+
+Preprocessing goals/ideas:
+- Add noise to background to blur current background audio (gaussian, sample, etc)
+- Change duration of samples used
+- Try 1D convolution of FFT instead
+
 
 
 Overall goals:

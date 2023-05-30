@@ -14,7 +14,16 @@ Week3:
 Preprocessing goals/ideas:
 - Add noise to background to blur current background audio (gaussian, sample, etc)
 - Change duration of samples used
+	- Try loading data in as audio, then cut into x second duration samples, then do mel spect
 - Try 1D convolution of FFT instead
+- Find more data to ones with current low count
+- Trim data for ones with the same
+- Research to find pretrained network and attempt to use them
+	- Audio network
+	- ImageNet
+	- ResNet
+- Create own pretrained network from previous years and use as starting point
+- Use something other than pytorch?
 
 
 

@@ -6,8 +6,11 @@ import soundfile as sf
 from scipy.signal import stft
 
 # Takes the directory with the data and returns pandas with metadata
-def load_metadata(directory):
-    df = pandas.read_csv(directory+'/train_metadata.csv')
+def load_metadata(directory, trim=False):
+    if trim:
+        df = pandas.read_csv(directory+'/train_metadata_trim.csv')
+    else:
+        df = pandas.read_csv(directory+'/train_metadata.csv')
     df['filename'] = directory+"/train_audio/"+df['filename']
     chosen_coloumns = ['latitude', 'longitude', 'common_name', 'rating', 'filename']
     return df[chosen_coloumns]

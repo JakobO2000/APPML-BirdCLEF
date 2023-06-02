@@ -11,7 +11,7 @@ def load_metadata(directory, trim=False):
         df = pandas.read_csv(directory+'/train_metadata_trim.csv')
     else:
         df = pandas.read_csv(directory+'/train_metadata.csv')
-        df['filename'] = directory+"/train_audio/"+df['filename']
+    df['filename'] = directory+"/train_audio/"+df['filename']
     chosen_coloumns = ['latitude', 'longitude', 'common_name', 'rating', 'filename']
     return df[chosen_coloumns]
 

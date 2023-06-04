@@ -19,6 +19,8 @@ def load_metadata(directory, trim=False):
 # Takes filepath from metadata dataframe and returns audio file
 def load_audiofile(filepath):
     audio, sr = sf.read(filepath)
+    if len(audio.shape) > 1:
+        audio = np.mean(audio, axis=1)
     return audio.astype(np.float32), sr
 
 

@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 
 import torch
 from torch import nn
-from torchsummary import summary
 
 #Attempt at a dynamic CNN model creater class, probably need to add maxpool and relu for final edition
 

@@ -3,7 +3,7 @@ import pandas
 import torch
 import torchaudio
 import soundfile as sf
-from scipy.signal import stft
+from scipy.signal import stft, lfilter
 
 # Takes the directory with the data and returns pandas with metadata
 def load_metadata(directory, trim=False):
@@ -23,7 +23,10 @@ def load_audiofile(filepath):
         audio = np.mean(audio, axis=1)
     return audio.astype(np.float32), sr
 
-
+def pcen(E, alpha=0.98, delta=2, r=0.5, s=0.025, eps=1e-6):   
+    M = lfilter([s], [1, s - 1], E)
+    smooth = (eps + M)**(-alpha)
+    return (E * smooth + delta)**r - delta**r
 # Converts ogg audio to waveform and spectrogram. Exact values for melspectrogram function might need to be changed values currently chosen from https://www.kaggle.com/code/awsaf49/birdclef23-pretraining-is-all-you-need-train
 # audio -- Can be filepath from metadata dataframe or numpy array with ogg data
 def get_melspectrogram(audio, sr=32000, n_mels=128, n_fft=2028, hop_length=512, fmax=16000, fmin=20,power=2.0,top_db=100):
@@ -42,8 +45,8 @@ def get_melspectrogram(audio, sr=32000, n_mels=128, n_fft=2028, hop_length=512, 
     melspectrogram = transform(waveform)
 
     melspectrogram = torchaudio.transforms.AmplitudeToDB()(melspectrogram)
+
     melspectrogram = torch.nn.functional.normalize(melspectrogram, p=2, dim=0)
-    
     melspectrogram = (melspectrogram * 255)
 
     return melspectrogram
